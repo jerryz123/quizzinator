@@ -39,11 +39,10 @@ class Question:
 		prompt=''
 		for w in self.sentence.abwords:
 			if w in self.chunkanswer.words:
-				prompt+="____ "
+				prompt+="____"
 			else:
-				prompt+=w.text+" "
-
-		return prompt
+				prompt+=w.text + " "
+		return prompt + "\n" + "answer: " + self.chunkanswer.text + "\n" + str(Word(self.chunkanswer.root(), 5, self.sentence.paragraph).distractors())
 
 	def fillwhat(self):
 		prompt=''
@@ -57,7 +56,7 @@ class Question:
 			if c == '_':
 				_length += '_'
 		if self.chunkanswer.root():
-			return prompt[:prompt.find(_length)] + quiddict[self.chunkanswer.root().ent_type] + prompt[prompt.find(_length) + len(_length):] + "\n" + str(Word(self.chunkanswer.root(), 5,2).distractors())
+			return prompt[:prompt.find(_length)] + quiddict[self.chunkanswer.root().ent_type] + prompt[prompt.find(_length) + len(_length):] + "\n" + 'answer: ' + self.chunkanswer.text + "\n" + str(Word(self.chunkanswer.root(), 5, self.sentence.paragraph).distractors())
 
 	
 
@@ -193,13 +192,13 @@ class Word:
 	def displayusage(self):
 		print(self.text,self.usage)
 	def distractors(self):
-		similarity = [t for t in paragraph.abstraction]
+		similarity = [t for t in self.paragraph.abstraction]
 		similarity.sort(key = lambda x: self.abstraction.similarity(x))
 		similarity.reverse()
 		similarity = [t.text for t in similarity if t.pos == self.abstraction.pos]
 		newlist = []
 		for x in similarity:
-			if not (x in newlist):
+			if not (x in newlist) and x != self.text:
 				newlist.append(x)
 		return newlist[:10]
 
