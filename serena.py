@@ -12,6 +12,7 @@ test=''
 for i in t:
 	test+=i+" "
 
+# contains sentence and answer, runs stuff on that
 class Question:
 	def __init__(self,sent,answer):
 		self.sentence=sent
@@ -25,7 +26,22 @@ class Question:
 				prompt+=w.text+" "
 		return prompt
 
+	def fillwhat(self):
+		prompt=''
+		for w in self.sentence.abwords:
+			if w in self.chunkanswer.words:
+				prompt+="what "
+			else:
+				prompt+=w.text+" "
+		return prompt
+
+	
+
+# sentence!
 class Sentence:
+	#span = abstraction of sentence
+	#parent = paragraph
+	#c = list of nounchunks in sentence
 	def __init__(self,span,parent,c=[]):
 		self.abstraction=span
 		self.abwords=[w for w in span]
@@ -43,26 +59,36 @@ class Sentence:
 			for c in dup[0].children:
 				dup[1].addchild(listdic(d,c))
 		self.words=[dup[1] for dup in d]
+
+	#displays usage of every word in sentence
 	def displayusage(self):
 		for w in self.words:
 			w.displayusage()
+
+	#prints sentence
 	def display(self):
 		s=''
 		for w in self.words:
 			s+=w.text + " "
 		print(s)
 
-
+#interprets NO
 def listdic(lis,inp):
 	for dup in lis:
 		if dup[0]==inp:
 			return dup[1]
+
+#a nounchunk
 class Chunk:
 	def __init__(self,span):
+		#abstract nounchunk
 		self.abstraction=span
+		#abstract words in nounchunk
 		self.words=[w for w in span]
+		#nounchunk string
 		self.text=span.text
 
+#is not a paragraph
 class Paragraph:
 	def __init__(self,t):
 		self.abstraction=nlp(t)
