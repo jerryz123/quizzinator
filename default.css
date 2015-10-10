@@ -1,6 +1,6 @@
 	html, body
 	{
-		height: 100%;
+		height: 50%;
 	}
 	
 	body
@@ -288,12 +288,12 @@
 
 	.title
 	{
-		margin-bottom: 3em;
+		margin-bottom: 1em;
 	}
 	
 	.title h2
 	{
-		font-size: 2.8em;
+		font-size: 2em;
 	}
 	
 	.title .byline
@@ -323,15 +323,15 @@
 
 	#logo
 	{
-		padding: 8em 0em 4em 0em;
+		padding: 5em 0em 2em 0em;
 	}
 	
 	#logo h1
 	{
 		display: block;
-		margin-bottom: 0.20em;
-		padding: 0.20em 0.9em;
-		font-size: 3.5em;
+		margin-bottom: 0.020em;
+		padding: 0.020em 0.09em;
+		font-size: 5em;
 	}
 	
 	#logo a
@@ -450,7 +450,7 @@
 	{
 		overflow: hidden;
 		width: 1000px;
-		padding: 6em 100px 0em 100px;
+		padding: 2em 100px 0em 100px;
 		text-align: center;
 	}
 	

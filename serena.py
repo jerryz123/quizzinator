@@ -33,7 +33,7 @@ class Sentence:
 		self.paragraph=parent
 		self.makewords()
 		self.chunks=c
-		self.questions=[Question(self,a) for a in self.chunks]
+		self.questions=[Question(self,a) for a in self.chunks if a.useable]+[Question(self,NumChunk(num)) for num in self.abwords if num.like_num]
 
 
 	def makewords(self):
@@ -45,7 +45,7 @@ class Sentence:
 		self.words=[dup[1] for dup in d]
 	def displayusage(self):
 		for w in self.words:
-			w.displayusage()
+			w.displayusage() 
 	def display(self):
 		s=''
 		for w in self.words:
@@ -57,12 +57,24 @@ def listdic(lis,inp):
 	for dup in lis:
 		if dup[0]==inp:
 			return dup[1]
+
 class Chunk:
 	def __init__(self,span):
 		self.abstraction=span
 		self.words=[w for w in span]
 		self.text=span.text
-
+		self.use()
+	def use(self):
+		for w in self.words:
+			if w.ent_type!=0:
+				self.useable=True
+				return
+		self.useable=False
+class NumChunk(Chunk):
+	def __init__(self,w):
+		self.words=[w]
+		self.text=w.text
+		self.useable=True
 class Paragraph:
 	def __init__(self,t):
 		self.abstraction=nlp(t)
@@ -71,7 +83,8 @@ class Paragraph:
 		
 		self.text=self.abstraction.text
 
-
+	def showquestions(self):
+		[[print(q.fillblank()) for q in s.questions] for s in self.sentences]
 	def findchunksinsentence(self,sent):
 		chu=[]
 		for c in self.chunks:
