@@ -14,11 +14,11 @@ for i in t:
 class Question:
 	def __init__(self,sent,answer):
 		self.sentence=sent
-		self.answer=answer
+		self.chunkanswer=answer
 	def fillblank(self):
 		prompt=''
 		for w in self.sentence.abwords:
-			if w in self.answer:
+			if w in self.chunkanswer.words:
 				prompt+="____ "
 			else:
 				prompt+=w.text+" "
@@ -31,8 +31,8 @@ class Sentence:
 		self.text=span.text
 		self.paragraph=parent
 		self.makewords()
-		self.listchunks=[[w for w in chunk] for chunk in c]
-		self.questions=[Question(self,c) for c in self.listchunks]
+		self.chunks=c
+		self.questions=[Question(self,a) for a in self.chunks]
 
 
 	def makewords(self):
@@ -56,7 +56,11 @@ def listdic(lis,inp):
 	for dup in lis:
 		if dup[0]==inp:
 			return dup[1]
-
+class Chunk:
+	def __init__(self,span):
+		self.abstraction=span
+		self.words=[w for w in span]
+		self.text=span.text
 
 class Paragraph:
 	def __init__(self,t):
@@ -65,22 +69,14 @@ class Paragraph:
 		self.sentences=[Sentence(s,self,self.findchunksinsentence(s)) for s in self.abstraction.sents]
 		
 		self.text=self.abstraction.text
-	def findchunkfreq(self):
-		chunks=[]
-		lis=[]
-		for chunk in self.abchunks:
-			if chunk not in chunks:
-				lis.append([chunk,self.abchunks.count(chunk)])
-				chunks.append(chunk)
-		lis.sort(key=(lambda x:x[1]))
-		self.sortedchunks=lis
+
 
 	def findchunksinsentence(self,sent):
-		chunks=[]
-		for c in self.abchunks:
-			if c.start>=sent.start and c.start<=sent.end:
-				chunks.append(c)
-		return chunks
+		chu=[]
+		for c in self.chunks:
+			if c.abstraction.start>=sent.start and c.abstraction.start<=sent.end:
+				chu.append(c)
+		return chu
 	def display(self): 
 		for s in self.sentences:
 			s.display()
@@ -88,9 +84,9 @@ class Paragraph:
 		for s in self.sentences:
 			s.displayusage()
 	def listchunks(self):
-		self.abchunks=[c for c in self.abstraction.noun_chunks if len(c)>1]
-	def displaychunks(self):
-		
+		self.chunks=[Chunk(c) for c in self.abstraction.noun_chunks if len(c)>1]
+
+
 
 def displayspan(span):
 	for w in span:
