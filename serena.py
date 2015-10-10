@@ -4,6 +4,23 @@ from collections import Counter
 from spacy.parts_of_speech import *
 import random
 
+quiddict = {
+		0: None,
+		28061: 'What person',
+		1499631: 'What place',
+		164860: 'What facility',
+		202115: 'What organization',
+		85248: 'What place',
+		39247: 'What law',
+		17764: 'When',
+		55719: 'When',
+		81537: 'What place',
+		87482: 'What place',
+		202115: 'What place',
+		354826: "how many"
+
+	}
+
 nlp = English()
 
 fil = open("sampletext.txt")
@@ -11,6 +28,7 @@ t= fil.read().splitlines()
 test=''
 for i in t:
 	test+=i+" "
+
 
 # contains sentence and answer, runs stuff on that
 class Question:
@@ -38,7 +56,7 @@ class Question:
 		for c in prompt:
 			if c == '_':
 				_length += '_'
-		return prompt[:prompt.find(_length)] + 'what ' + prompt[prompt.find(_length) + len(_length):]
+		return prompt[:prompt.find(_length)] + quiddict[w.head().ent_type] + prompt[prompt.find(_length) + len(_length):]
 
 	
 
@@ -104,6 +122,10 @@ class Chunk:
 				self.useable=True
 				return
 		self.useable=False
+	def head(self):
+		for w in self.words:
+			if w.head == w:
+				return w
 class NumChunk(Chunk):
 	def __init__(self,w):
 		self.words=[w]
@@ -156,6 +178,7 @@ class Word:
 		self.abstraction=token
 		self.children=[]
 		self.usage=token.dep_
+		self.entity = token.ent_type
 	def display(self):
 		print(self.text)
 	def sethead(self,h):
