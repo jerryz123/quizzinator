@@ -5,19 +5,19 @@ from spacy.parts_of_speech import *
 import random
 
 quiddict = {
-		0: None,
-		28061: 'What person',
-		1499631: 'What place',
-		164860: 'What facility',
-		202115: 'What organization',
-		85248: 'What place',
-		39247: 'What law',
-		17764: 'When',
-		55719: 'When',
-		81537: 'What place',
-		87482: 'What place',
-		202115: 'What place',
-		354826: "how many"
+		0: 'WHAT ',
+		28061: 'WHAT person ',
+		1499631: 'WHAT place ',
+		164860: 'WHAT facility ',
+		202115: 'WHAT organization ',
+		85248: 'WHAT place ',
+		39247: 'WHAT law ',
+		17764: 'HOW MANY ',
+		55719: 'HOW MANY ',
+		81537: 'WHAT place ',
+		87482: 'WHAT place ',
+		202115: 'WHAT place ',
+		354826: "HOW many "
 
 	}
 
@@ -56,7 +56,8 @@ class Question:
 		for c in prompt:
 			if c == '_':
 				_length += '_'
-		return prompt[:prompt.find(_length)] + quiddict[w.head().ent_type] + prompt[prompt.find(_length) + len(_length):]
+		if self.chunkanswer.root():
+			return prompt[:prompt.find(_length)] + quiddict[self.chunkanswer.root().ent_type] + prompt[prompt.find(_length) + len(_length):] + "\n" + str(Word(self.chunkanswer.root(), 5,2).distractors())
 
 	
 
@@ -122,10 +123,11 @@ class Chunk:
 				self.useable=True
 				return
 		self.useable=False
-	def head(self):
-		for w in self.words:
-			if w.head == w:
-				return w
+	def root(self):
+		w = self.words[0]
+		while w.head in self.words:
+			w = w.head
+		return w
 class NumChunk(Chunk):
 	def __init__(self,w):
 		self.words=[w]
@@ -146,7 +148,7 @@ class Paragraph:
 	def showblank(self):
 		[[print(q.fillblank()) for q in s.questions] for s in self.sentences]
 	def showwhat(self):
-		[[print(q.fillwhat()) for q in s.questions] for s in self.sentences]
+		[[print(q.fillwhat()) for q in s.questions if q.fillwhat()] for s in self.sentences]
 	def findchunksinsentence(self,sent):
 		chu=[]
 		for c in self.chunks:
@@ -179,16 +181,27 @@ class Word:
 		self.children=[]
 		self.usage=token.dep_
 		self.entity = token.ent_type
+		self.paragraph = paragraph
 	def display(self):
 		print(self.text)
 	def sethead(self,h):
 		self.head=h
 	def setchildren(self,ch=[]):
-		self.children=ch
+		self.children=c
 	def addchild(self,c):
 		self.children.append(c)
 	def displayusage(self):
 		print(self.text,self.usage)
+	def distractors(self):
+		similarity = [t for t in paragraph.abstraction]
+		similarity.sort(key = lambda x: self.abstraction.similarity(x))
+		similarity.reverse()
+		similarity = [t.text for t in similarity if t.pos == self.abstraction.pos]
+		newlist = []
+		for x in similarity:
+			if not (x in newlist):
+				newlist.append(x)
+		return newlist[:10]
 
 
 def listify(string):
