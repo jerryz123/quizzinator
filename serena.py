@@ -24,16 +24,21 @@ class Question:
 				prompt+="____ "
 			else:
 				prompt+=w.text+" "
+
 		return prompt
 
 	def fillwhat(self):
 		prompt=''
 		for w in self.sentence.abwords:
 			if w in self.chunkanswer.words:
-				prompt+="what "
+				prompt+="____"
 			else:
 				prompt+=w.text+" "
-		return prompt
+		_length = ''
+		for c in prompt:
+			if c == '_':
+				_length += '_'
+		return prompt[:prompt.find(_length)] + 'what ' + prompt[prompt.find(_length) + len(_length):]
 
 	
 
