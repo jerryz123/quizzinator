@@ -4,6 +4,7 @@ from collections import Counter
 
 nlp = English()
 
+# returns dictionary of noun chunks: occurrences and list of sentences (strings) in a text
 def hah():
 	text = nlp(input())
 	nounchunks = Counter([n.orth_.lower() for n in text.noun_chunks])
