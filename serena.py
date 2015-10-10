@@ -2,10 +2,10 @@ from __future__ import unicode_literals, print_function
 from spacy.en import English
 from collections import Counter
 from spacy.parts_of_speech import *
+import random
 
 nlp = English()
 
-<<<<<<< HEAD
 fil = open("sampletext.txt")
 t= fil.read().splitlines()
 test=''
@@ -124,7 +124,27 @@ def listify(string):
 # returns dictionary of noun chunks: occurrences and list of sentences (strings) in a text
 def hah():
 	text = nlp(input())
-	nounchunks = Counter([n.orth_.lower() for n in text.noun_chunks])
-	sentences = [s.orth_ for s in text.sents]
+	nounchunks = Counter([n.orth_ for n in text.noun_chunks])
+	sentences = [s.text for s in text.sents]
 	return nounchunks, sentences
+
+
+def process(nouns):
+	n = [ [nouns[x], x] for x in nouns ]
+	n.sort(key = lambda x: x[0])
+	n.reverse()
+	return n
+
+def questions(n, sents):
+	for i in range(10):
+		word = n[i][1]
+		q = random.choice([s for s in sents if word in s])
+		print(q[0: q.find(word)] + 'which thing ' + q[q.find(word) + len(word):])
+
+#takes in a string and returns list of lists, where each list is the noun chunks in each sentence 
+def sentence_noun_chunks(string):
+	sentences = [s for s in nlp(string).sents]
+	sentences = [nlp(s.text) for s in sentences]
+	chunks = [[ch.text for ch in s.noun_chunks] for s in sentences]
+	return chunks
 
