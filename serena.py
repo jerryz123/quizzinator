@@ -5,6 +5,7 @@ from spacy.parts_of_speech import *
 
 nlp = English()
 
+<<<<<<< HEAD
 fil = open("sampletext.txt")
 t= fil.read().splitlines()
 test=''
@@ -118,4 +119,12 @@ def listify(string):
 	text = nlp(string)
 	return[Sentence(s) for s in text.sents]
 
+
+
+# returns dictionary of noun chunks: occurrences and list of sentences (strings) in a text
+def hah():
+	text = nlp(input())
+	nounchunks = Counter([n.orth_.lower() for n in text.noun_chunks])
+	sentences = [s.orth_ for s in text.sents]
+	return nounchunks, sentences
 
