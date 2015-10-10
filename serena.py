@@ -116,8 +116,10 @@ class Paragraph:
 		
 		self.text=self.abstraction.text
 
-	def showquestions(self):
+	def showblank(self):
 		[[print(q.fillblank()) for q in s.questions] for s in self.sentences]
+	def showwhat(self):
+		[[print(q.fillwhat()) for q in s.questions] for s in self.sentences]
 	def findchunksinsentence(self,sent):
 		chu=[]
 		for c in self.chunks:
@@ -178,7 +180,7 @@ def hah():
 def process(nouns):
 	n = [ [nouns[x], x] for x in nouns ]
 	n.sort(key = lambda x: x[0])
-	n.reverse()
+	n.reverse() 
 	return n
 
 def questions(n, sents):
