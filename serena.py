@@ -43,7 +43,11 @@ class Question:
 				prompt+="____"
 			else:
 				prompt+=w.text + " "
-		return prompt + "\n" + "answer: " + self.chunkanswer.text + "\n" + str(Word(self.chunkanswer.root(), 5, self.sentence.paragraph).distractors())
+		distractors = Word(self.chunkanswer.root(), 5, self.sentence.paragraph).distractors()
+		distractors = [d for d in distractors if d and d not in self.sentence.text]
+		distractors = distractors[:3]
+		distractors.append(self.chunkanswer.text)
+		return prompt "\n" + str(distractors)
 
 	def fillwhat(self):
 		prompt=''
@@ -144,6 +148,9 @@ class Paragraph:
 		self.sentences=[Sentence(s,self,self.findchunksinsentence(s)) for s in self.abstraction.sents]
 		
 		self.text=self.abstraction.text
+	def randomfillblanks(self):
+		[[q for q in s.questions] for s in self.sentences]
+
 
 	def showblank(self):
 		[[print(q.fillblank()) for q in s.questions] for s in self.sentences]
