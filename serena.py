@@ -17,7 +17,8 @@ quiddict = {
 		81537: 'WHAT place ',
 		87482: 'WHAT place ',
 		202115: 'WHAT place ',
-		354826: "HOW many "
+		354826: "HOW many ",
+		341856: "WHAT"
 
 	}
 
@@ -192,13 +193,18 @@ class Word:
 	def displayusage(self):
 		print(self.text,self.usage)
 	def distractors(self):
-		similarity = [t for t in self.paragraph.abstraction]
+		similarity = [t for t in self.paragraph.abstraction if t!= self.abstraction]
 		similarity.sort(key = lambda x: self.abstraction.similarity(x))
 		similarity.reverse()
-		similarity = [t.text for t in similarity if t.pos == self.abstraction.pos]
+		### CANT GET TO WORK UGH ###
+		def nounchunky(token):
+			for chunk in self.paragraph.abstraction.noun_chunks:
+				if token in chunk:
+					return chunk.text
+		similarity = [nounchunky(t) for t in similarity if t.pos == self.abstraction.pos]
 		newlist = []
 		for x in similarity:
-			if not (x in newlist) and x != self.text:
+			if not (x in newlist):
 				newlist.append(x)
 		return newlist[:10]
 
